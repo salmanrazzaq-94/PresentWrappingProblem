@@ -1,0 +1,28 @@
+int: n_rects;
+int: paper_w;
+int: paper_h;
+set of int: NRECTS = 1..n_rects;
+array[NRECTS] of int: w;
+array[NRECTS] of int: h;
+array[NRECTS] of 0..paper_w: x;
+array[NRECTS] of 0..paper_h: y;
+
+test inside_paper() = 
+  if forall (i in NRECTS)(x[i] + w[i] <= paper_w) /\ forall (i in NRECTS)(y[i] + h[i] <= paper_h)
+  then
+    true
+  else
+    trace_stdout("Some rectangles don't fit inside the paper roll.\n", false)
+  endif;
+  
+test no_overlap() = 
+  if forall (i, j in NRECTS)(i < j -> (x[i] + w[i] <= x[j] \/ x[j] + w[j] <= x[i] \/ y[i] + h[i] <= y[j] \/ y[j] + h[j] <= y[i]))
+  then
+    true
+  else
+    trace_stdout("Some rectangles overlap.\n", false)
+  endif;
+  
+array[int] of bool: tests = [inside_paper(), no_overlap()];
+  
+output [if forall(tests) then "CORRECT\n" else "INCORRECT\n" endif];
